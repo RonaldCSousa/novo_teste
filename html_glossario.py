@@ -130,8 +130,8 @@ import streamlit as st
 
 # Criar um DataFrame de exemplo
 data = {
-    'Categoria': ['Banco', 'Banco', 'Banco', 'Caixa', 'Caixa', 'Caixa', 'Empréstimos', 'Empréstimos'],
-    'Subcategoria': ['Caixas', 'Cliente', 'Finanças', 'Dinheiro', 'Cheque', 'Pix', 'Crédito Pessoal', 'Empréstimo Imobiliário'],
+    'Categoria': ['Banco', 'Banco', 'Banco', 'Caixa', 'Caixa', 'Caixa', 'Empréstimos', 'Empréstimos','Empréstimos'],
+    'Subcategoria': ['Caixas', 'Cliente', 'Finanças', 'Dinheiro', 'Cheque', 'Pix', 'Crédito Pessoal', 'Empréstimo Imobiliário','Crédito Pessoal'],
     'Descrição': [
         'Caixas físicos e automáticos',
         'Clientes que utilizam os serviços bancários',
@@ -140,7 +140,8 @@ data = {
         'Cheques para transações e compensações',
         'Transações via sistema de pagamento instantâneo',
         'Empréstimos para pessoas físicas com diversas condições',
-        'Empréstimos para a compra de imóveis'
+        'Empréstimos para a compra de imóveis',
+        'Empréstimos para a compra de imóveis',
     ]
 }
 
@@ -215,3 +216,103 @@ html_content += "</table>"
 
 # Exibir a tabela no Streamlit com CSS aplicado
 st.markdown(css_content + html_content, unsafe_allow_html=True)
+
+
+import pandas as pd
+import streamlit as st
+
+# Criar um DataFrame de exemplo
+data = {
+    'Categoria': ['Banco', 'Banco', 'Banco', 'Caixa', 'Caixa', 'Caixa', 'Empréstimos', 'Empréstimos', 'Empréstimos'],
+    'Subcategoria': ['Caixas', 'Cliente', 'Finanças', 'Dinheiro', 'Cheque', 'Pix', 'Crédito Pessoal', 'Empréstimo Imobiliário', 'Crédito Pessoal'],
+    'Descrição': [
+        'Caixas físicos e automáticos',
+        'Clientes que utilizam os serviços bancários',
+        'Gestão das finanças internas e externas',
+        'Dinheiro disponível no caixa eletrônico',
+        'Cheques para transações e compensações',
+        'Transações via sistema de pagamento instantâneo',
+        'Empréstimos para pessoas físicas com diversas condições',
+        'Empréstimos para a compra de imóveis',
+        'Empréstimos para a compra de imóveis',
+    ]
+}
+
+df = pd.DataFrame(data)
+
+# Definindo o CSS customizado
+css_content = """
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 30px auto;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #333;
+        }
+        th {
+            background-color: #004B87;
+            color: white;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+        table, th, td {
+            border-radius: 5px;
+        }
+        .merge {
+            background-color: #FF6A13;
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            font-style: italic;
+        }
+    </style>
+"""
+
+# Filtrando categorias únicas
+categorias = df['Categoria'].unique()
+
+# Gerando uma tabela separada para cada categoria
+for categoria in categorias:
+    # Filtrando os dados por categoria
+    df_categoria = df[df['Categoria'] == categoria]
+
+    # Criando o HTML da tabela
+    html_content = "<table>"
+
+    # Cabeçalhos da tabela
+    html_content += "<tr><th>Categoria</th><th>Subcategoria</th><th>Descrição</th></tr>"
+
+    # Variável para armazenar a categoria anterior
+    previous_categoria = None
+
+    # Adicionando as linhas da tabela com o índice da categoria
+    for index, row in df_categoria.iterrows():
+        subcategoria = row['Subcategoria']
+        descricao = row['Descrição']
+
+        # Se a categoria for a mesma da linha anterior, não exibe novamente
+        categoria_display = categoria if categoria != previous_categoria else ""
+
+        # Adiciona a linha com a descrição, exibindo ou não a categoria
+        html_content += f"<tr><td>{categoria_display}</td><td>{subcategoria}</td><td>{descricao}</td></tr>"
+
+        # Atualiza a categoria anterior
+        previous_categoria = categoria
+
+    html_content += "</table>"
+
+    # Exibindo cada tabela para a categoria
+    st.markdown(css_content + html_content, unsafe_allow_html=True)
